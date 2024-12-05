@@ -6,3 +6,10 @@ class RHNode:
         self.row = node.row
         self.col = node.col
         self.next = None
+        self.prev = None
+
+    def get_tail(self):
+        current = self
+        while current.next != None:
+            current = current.next
+        return current

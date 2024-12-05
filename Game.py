@@ -1,12 +1,15 @@
 import pygame
 import sys
 from Grid import Grid
+from History import History
+from copy import deepcopy
 
 # Initialize Pygame
 pygame.init()
 
 # Constants
 GRID_SIZE = 4  # 4x4 grid
+MAX_TILE = 2048
 CELL_SIZE = 100  # Cell dimensions in pixels
 MARGIN = 5  # Margin between cells
 GRID_WIDTH = GRID_SIZE * CELL_SIZE + (GRID_SIZE + 1) * MARGIN
@@ -25,9 +28,12 @@ BUTTON_FONT = pygame.font.Font(None, 35)
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("2048")
 
+# Initialize History
+history = History(5)
+
 # Initialize Grid
 grid = Grid(GRID_SIZE)
-score = 0  # Initialize score
+score = grid.score  # Initialize score
 
 
 def draw_grid():
@@ -38,21 +44,24 @@ def draw_grid():
             y = MARGIN + row * (CELL_SIZE + MARGIN)
             pygame.draw.rect(screen, CELL_COLOR, (x, y, CELL_SIZE, CELL_SIZE))
             
-            # Display the cell value if it's not 0
+            # Display the cell value if it
             node = grid.get(row, col)
             if node == None: # if no node in the location
+                # print(f"Game: draw_grid: {row}, {col} is None")
                 continue
 
             value = node.value
 
             # Debug
             if value == 0:
-                print(f"Game: draw_grid: Node at {row}, {col} is 0")
+                # print(f"Game: draw_grid: {node} is 0")
                 continue
             
             text = FONT.render(str(value), True, FONT_COLOR)
             text_rect = text.get_rect(center=(x + CELL_SIZE // 2, y + CELL_SIZE // 2))
             screen.blit(text, text_rect)
+
+            # print("Game: draw_grid: just drew ", node)
 
 
 def draw_side_panel():
@@ -86,7 +95,31 @@ def reset_game():
     grid = Grid(GRID_SIZE)
     score = 0
 
+def undo():
+    """Undo the last move."""
+    global grid, score
+    grid = history.pop()
+    score = grid.score
+
 
 def get_current_grid():
     """Returns the current grid."""
+    global grid
     return grid
+
+def get_max_tile():
+    """Returns the maximum tile value on the grid."""
+    global grid
+    return grid.max_tile
+
+def move(direction):
+    """Moves the grid in the specified direction."""
+    print(f"Game: move: Moving {direction}")
+    global grid, score
+    # history.push(grid)
+    # print(f"Game: move: Pushed {grid} to history")
+    grid.move(direction)
+    print(f"Game: move: Moved {direction}")
+    # grid = deepcopy(grid)
+    score = grid.score
+    print(f"Game: move: \n{grid}")
