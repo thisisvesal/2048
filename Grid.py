@@ -96,51 +96,216 @@ class Grid:
         if row.node == node:
             row.node = node.right
 
-    def addNode(self, node):
-        """Adds a node to the grid."""
-        # Add to the row header list
-        row_node = self.getRowHead(node.row)
-        if not row_node:
-            # Create a new row header and insert it in the correct position
-            new_row = RHNode(node)
-            if not self.rowsHead or self.rowsHead.node.row > node.row:
-                # Insert at the beginning
-                new_row.next = self.rowsHead
-                self.rowsHead = new_row
-            else:
-                # Traverse to find the correct position
-                current = self.rowsHead
-                while current.next and current.next.node.row < node.row:
-                    current = current.next
-                new_row.next = current.next
-                current.next = new_row
-        else:
-            # Add node to the existing row
-            tail = row_node.node.get_right_tail()
-            tail.right = node
-            node.left = tail
+    def getNodeUp(self, node: Node) -> Node:
+        if not self.getColHead(node.col):
+            return None
+        
+        cur = self.getColHead(node.col).node
 
-        # Add to the column header list
-        col_node = self.getColHead(node.col)
-        if not col_node:
-            # Create a new column header and insert it in the correct position
-            new_col = RHNode(node)
-            if not self.colsHead or self.colsHead.node.col > node.col:
-                # Insert at the beginning
-                new_col.next = self.colsHead
-                self.colsHead = new_col
+        if cur == None:
+            return None
+        
+        if node.row <= cur.row:
+            return None
+        
+        while cur.down != None and node.row > cur.down.row:
+            cur = cur.down
+        
+        return cur
+
+    def getNodeLeft(self, node: Node) -> Node:
+        if not self.getRowHead(node.row):
+            return None
+
+        cur = self.getRowHead(node.row).node
+
+        if cur == None:
+            return None
+
+        if node.col <= cur.col:
+            return None
+
+        while cur.right != None and node.col > cur.right.col:
+            cur = cur.right
+
+        return cur
+    
+    def getNodeDown(self, node: Node) -> Node:
+        if not self.getColHead(node.col):
+            return None
+
+        cur = self.getColHead(node.col).node.get_down_tail()
+
+        if cur == None:
+            return None
+        
+        if node.row >= cur.row:
+            return None
+
+        while cur != None and cur.row <= node.row:
+            cur = cur.down
+
+        return cur
+    
+    def getNodeRight(self, node: Node) -> Node:
+        if not self.getRowHead(node.row):
+            return None
+
+        cur = self.getRowHead(node.row).node.get_right_tail()
+
+        if cur == None:
+            return None
+
+        if node.col >= cur.col:
+            return None
+
+        while cur != None and cur.col <= node.col:
+            cur = cur.right
+
+        return cur
+
+    
+    def addNode(self, node):
+        if self.getColHead(node.col) == None:
+            new = RHNode(node)
+            
+            if self.colsHead == None:
+                self.colsHead = new
+            elif self.colsHead.node.col > node.col:
+                new.next = self.colsHead
+                self.colsHead = new
             else:
-                # Traverse to find the correct position
                 current = self.colsHead
                 while current.next and current.next.node.col < node.col:
                     current = current.next
-                new_col.next = current.next
-                current.next = new_col
-        else:
-            # Add node to the existing column
-            tail = col_node.node.get_down_tail()
-            tail.down = node
-            node.up = tail
+                new.next = current.next
+                current.next = new
+
+        if self.getRowHead(node.row) == None:
+            new = RHNode(node)
+
+            if self.rowsHead == None:
+                self.rowsHead = new
+            elif self.rowsHead.node.row >= node.row:
+                new.next = self.rowsHead
+                self.rowsHead = new
+            else:   
+                current = self.rowsHead
+                while current.next and current.next.node.row < node.row:
+                    current = current.next
+                new.next = current.next
+                current.next = new
+        
+        if self.getNodeRight(node) != None:
+            self.getNodeRight(node).left = node
+        node.right = self.getNodeRight(node)
+        if self.getNodeLeft(node) != None:
+            self.getNodeLeft(node).right = node
+        node.left = self.getNodeLeft(node)
+        if self.getNodeUp(node) != None:
+            self.getNodeUp(node).down = node
+        node.up = self.getNodeUp(node)
+        if self.getNodeDown(node) != None:
+            self.getNodeDown(node).up = node
+        node.down = self.getNodeDown(node)
+
+    def setColHead(self, node):
+        new = RHNode(node)
+        if self.colsHead == None:
+            self.colsHead = new
+            return
+        elif self.colsHead.node.col > node.col:
+            new.next = self.colsHead
+            self.colsHead = new
+            return
+        current = self.colsHead
+        while current.next and current.next.node.col < node.col:
+            current = current.next
+
+        if current.next == None:
+            current.next = new
+            return
+        if current.next.node.col != node.col: # if the column doesn't exist
+            new.next = current.next
+            current.next = new
+            return
+
+        node.down = current.next.node
+        current.next.node.up = node
+        new.next = current.next.next
+        current.next = new
+
+    def setRowHead(self, node):
+        new = RHNode(node)
+        if self.rowsHead == None:
+            self.rowsHead = new
+            return
+        elif self.rowsHead.node.row > node.row:
+            new.next = self.rowsHead
+            self.rowsHead = new
+        current = self.rowsHead
+        while current.next and current.next.node.row < node.row:
+            current = current.next
+
+        if current.next == None:
+            current.next = new
+            return
+        elif current.next.node.row != node.row:  # if the row doesn't exist
+            new.next = current.next
+            current.next = new
+            return
+
+        node.right = current.next.node
+        current.next.node.left = node
+        new.next = current.next.next
+        current.next = new
+        
+
+    # def addNode(self, node):
+    #     """Adds a node to the grid."""
+    #     # Add to the row header list
+    #     row_head = self.getRowHead(node.row)
+    #     if not row_head:
+    #         # Create a new row header and insert it in the correct position
+    #         new_row = RHNode(node)
+    #         if not self.rowsHead or self.rowsHead.node.row > node.row:
+    #             # Insert at the beginning
+    #             new_row.next = self.rowsHead
+    #             self.rowsHead = new_row
+    #         else:
+    #             # Traverse to find the correct position
+    #             current = self.rowsHead
+    #             while current.next and current.next.node.row < node.row:
+    #                 current = current.next
+    #             new_row.next = current.next
+    #             current.next = new_row
+    #     else:
+    #         # Add node to the existing row
+    #         tail = row_head.node.get_right_tail()
+    #         tail.right = node
+    #         node.left = tail
+
+    #     # Add to the column header list
+    #     col_node = self.getColHead(node.col)
+    #     if not col_node:
+    #         # Create a new column header and insert it in the correct position
+    #         new_col = RHNode(node)
+    #         if not self.colsHead or self.colsHead.node.col > node.col:
+    #             # Insert at the beginning
+    #             new_col.next = self.colsHead
+    #             self.colsHead = new_col
+    #         else:
+    #             # Traverse to find the correct position
+    #             current = self.colsHead
+    #             while current.next and current.next.node.col < node.col:
+    #                 current = current.next
+    #             new_col.next = current.next
+    #             current.next = new_col
+    #     else:
+    #         # Add node to the existing column
+    #         tail = col_node.node.get_down_tail()
+    #         tail.down = node
+    #         node.up = tail
 
 
     def getNode(self, row, column):
