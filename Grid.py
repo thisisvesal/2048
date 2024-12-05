@@ -209,6 +209,27 @@ class Grid:
             self.getNodeDown(node).up = node
         node.down = self.getNodeDown(node)
 
+        self.updateColHeads()
+        self.updateRowsHeads()
+
+    def updateColHeads(self):
+        current = self.colsHead
+        while current:
+            current.node = current.node.get_up_tail()
+            if current.next != None and current.next.node == None:
+                current = current.next.next
+            else:
+                current = current.next
+
+    def updateRowsHeads(self):
+        current = self.rowsHead
+        while current:
+            current.node = current.node.get_left_tail()
+            if current.next != None and current.next.node == None:
+                current = current.next.next
+            else:
+                current = current.next
+
     def setColHead(self, node):
         new = RHNode(node)
         if self.colsHead == None:

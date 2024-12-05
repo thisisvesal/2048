@@ -22,3 +22,15 @@ class Node:
         while current.right != None:
             current = current.right
         return current
+    
+    def get_up_tail(self):
+        current = self
+        while current.up != None:
+            current = current.up
+        return current
+
+    def get_left_tail(self):
+        current = self
+        while current.left != None:
+            current = current.left
+        return current
