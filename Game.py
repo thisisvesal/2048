@@ -45,7 +45,7 @@ def draw_grid():
             pygame.draw.rect(screen, CELL_COLOR, (x, y, CELL_SIZE, CELL_SIZE))
             
             # Display the cell value if it
-            node = grid.get(row, col)
+            node = grid.getNode(row, col)
             if node == None: # if no node in the location
                 # print(f"Game: draw_grid: {row}, {col} is None")
                 continue

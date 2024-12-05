@@ -17,7 +17,7 @@ class Node:
         
         return self.value == value.value and self.row == value.row and self.col == value.col
     
-    def get_bottom_tail(self):
+    def get_down_tail(self):
         current = self
         while current.down != None:
             current = current.down

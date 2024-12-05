@@ -16,9 +16,11 @@ def start():
     # grid.add_node(Node(2, 1, 0))
     # grid.add_node(Node(2, 2, 0))
     # grid.add_node(Node(2, 3, 0))
-    grid.add_node(Node(2, 0, 2))
+    grid.addNode(Node(2, 0, 1))
     print(grid)
-    grid.add_node(Node(2, 0, 1))
+    grid.addNode(Node(4, 0, 2))
+    print(grid)
+    grid.addNode(Node(8, 0, 3))
     print(grid)
 
 
