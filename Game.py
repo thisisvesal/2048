@@ -150,12 +150,13 @@ def get_max_tile():
 
 def move(direction):
     """Moves the grid in the specified direction."""
+    history.clear()
     print(f"Game: move: Moving {direction}")
     global grid, score
-    # history.push(grid)
-    # print(f"Game: move: Pushed {grid} to history")
+    history.push(grid)
+    print(f"Game: move: Pushed {grid} to history")
 
-    # grid = deepcopy(grid)
+    grid = deepcopy(grid)
     grid.move(direction)
     print(f"Game: move: Moved {direction}")
     score = grid.score

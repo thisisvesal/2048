@@ -34,3 +34,8 @@ class History:
         if self.top:
             self.top.next = None
         return item
+    
+    def clear(self):
+        self.top = None
+        self.bottom = None
+        count = 0
