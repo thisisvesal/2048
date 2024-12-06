@@ -2,6 +2,7 @@ import random
 from Nodes.RHNode import RHNode
 from Nodes.Node import Node
 
+"""Obsolete"""
 class Grid:
     def __init__(self, size: int, prev = None) -> None:
         self.cellsStatus = [[False for _ in range(size)] for _ in range(size)]
@@ -807,3 +808,47 @@ class Grid:
             self._move_node_to_col(node, col)
         elif(node.col == col):
             self._move_node_to_row(node, row)
+
+
+    """Unused methods from the new grid class"""
+    # def removeEmptyColumns(self):
+    #     """Removes all empty columns."""
+    #     current = self.colsHead
+    #     prev = None
+    #     while current:
+    #         if current.node is None: 
+    #             if prev:
+    #                 prev.next = current.next
+    #             else:
+    #                 self.colsHead = current.next 
+    #         else:
+    #             prev = current 
+    #         current = current.next 
+
+    # def removeEmptyRows(self):
+    #     """Removes all empty rows."""
+    #     current = self.rowsHead
+    #     prev = None
+    #     while current:
+    #         if current.node is None:
+    #             if prev:
+    #                 prev.next = current.next
+    #             else:
+    #                 self.rowsHead = current.next
+    #         else:
+    #             prev = current
+    #         current = current.next
+
+
+    """Unused method from Node"""
+    # def isOrphaned(self):
+    #     if self.up and not self.up.down == self:
+    #         return True
+    #     if self.down and not self.down.up == self:
+    #         return True
+    #     if self.left and not self.left.right == self:
+    #         return True
+    #     if self.right and not self.right.left == self:
+    #         return True
+        
+    #     return False

@@ -33,68 +33,77 @@ class Grid:
     def moveNodeTo(self, node, row, column):
         """Moves a given node to the specified row and column."""
         # Remove the node from its current position
-        # self.removeNode(node)
-
-        # self.removeEmptyColumns()
-        # self.removeEmptyRows()
+        self.removeNode(node)
+        print(f"{node} removed")
+        print(self)
 
         # Place it at the new position
         node.row = row
         node.col = column
-        # self.addNode(node)
+        print(f"{node} added")
+        self.addNode(node)
+        print(self)
 
     def moveNodeToColumn(self, node, column):
         """Moves a given node to a specific column."""
         self.removeNode(node)
         node.col = column
         self.addNode(node)
-    
-    def removeEmptyColumns(self):
-        """Removes all empty columns."""
-        current = self.colsHead
-        prev = None
-        while current:
-            if current.node is None: 
-                if prev:
-                    prev.next = current.next
-                else:
-                    self.colsHead = current.next 
-            else:
-                prev = current 
-            current = current.next 
 
-    def removeEmptyRows(self):
-        """Removes all empty rows."""
-        current = self.rowsHead
-        prev = None
-        while current:
-            if current.node is None:
-                if prev:
-                    prev.next = current.next
-                else:
-                    self.rowsHead = current.next
-            else:
-                prev = current
+    def removeColumn(self, col):
+        if self.getColHead(col) == None:
+            return
+        if self.colsHead.node.col == col:
+            self.colsHead = self.colsHead.next
+            return
+        current = self.colsHead
+        while current.next and current.next.node.col != col:
             current = current.next
+        if current.next == None:
+            return
+        
+        current.next = current.next.next
+
+    def removeRow(self, row):
+        if self.getRowHead(row) == None:
+            return
+        if self.rowsHead.node.row == row:
+            self.rowsHead = self.rowsHead.next
+            return
+        current = self.rowsHead
+        while current.next and current.next.node.row != row:
+            current = current.next
+        if current.next == None:
+            return
+        
+        current.next = current.next.next
 
     def removeNode(self, node):
         """Removes a node from the grid."""
         if node.up:
             node.up.down = node.down
+        elif node.down:
+            self.getColHead(node.col).node = node.down
+        else:
+            self.removeColumn(node.col)
+
         if node.down:
             node.down.up = node.up
+
         if node.left:
             node.left.right = node.right
+        elif node.right:
+            self.getRowHead(node.row).node = node.right
+        else:
+            self.removeRow(node.row)
+
         if node.right:
             node.right.left = node.left
 
-        column = self.getColHead(node.col)
-        if column.node == node:
-            column.node = node.down
-
-        row = self.getRowHead(node.row)
-        if row.node == node:
-            row.node = node.right
+        node.up = node.down = node.right = node.left = None
+    
+        self.updateColHeads()
+        self.updateRowHeads()
 
     def getNodeUp(self, node: Node) -> Node:
         if not self.getColHead(node.col):
@@ -112,7 +121,24 @@ class Grid:
             cur = cur.down
         
         return cur
+    
+    def getNodeDown(self, node: Node) -> Node:
+        if not self.getColHead(node.col):
+            return None
 
+        cur = self.getColHead(node.col).node.get_down_tail()
+
+        if cur == None:
+            return None
+        
+        if node.row >= cur.row:
+            return None
+
+        while cur.up != None and node.row < cur.up.row:
+            cur = cur.up
+
+        return cur
+    
     def getNodeLeft(self, node: Node) -> Node:
         if not self.getRowHead(node.row):
             return None
@@ -130,23 +156,6 @@ class Grid:
 
         return cur
     
-    def getNodeDown(self, node: Node) -> Node:
-        if not self.getColHead(node.col):
-            return None
-
-        cur = self.getColHead(node.col).node.get_down_tail()
-
-        if cur == None:
-            return None
-        
-        if node.row >= cur.row:
-            return None
-
-        while cur != None and cur.row <= node.row:
-            cur = cur.down
-
-        return cur
-    
     def getNodeRight(self, node: Node) -> Node:
         if not self.getRowHead(node.row):
             return None
@@ -159,8 +168,8 @@ class Grid:
         if node.col >= cur.col:
             return None
 
-        while cur != None and cur.col <= node.col:
-            cur = cur.right
+        while cur.left != None and node.col < cur.left.col:
+            cur = cur.left
 
         return cur
 
@@ -202,15 +211,15 @@ class Grid:
         if self.getNodeLeft(node) != None:
             self.getNodeLeft(node).right = node
         node.left = self.getNodeLeft(node)
-        if self.getNodeUp(node) != None:
-            self.getNodeUp(node).down = node
-        node.up = self.getNodeUp(node)
         if self.getNodeDown(node) != None:
             self.getNodeDown(node).up = node
         node.down = self.getNodeDown(node)
+        if self.getNodeUp(node) != None:
+            self.getNodeUp(node).down = node
+        node.up = self.getNodeUp(node)
 
         self.updateColHeads()
-        self.updateRowsHeads()
+        self.updateRowHeads()
 
     def updateColHeads(self):
         current = self.colsHead
@@ -221,7 +230,7 @@ class Grid:
             else:
                 current = current.next
 
-    def updateRowsHeads(self):
+    def updateRowHeads(self):
         current = self.rowsHead
         while current:
             current.node = current.node.get_left_tail()
@@ -229,105 +238,6 @@ class Grid:
                 current = current.next.next
             else:
                 current = current.next
-
-    def setColHead(self, node):
-        new = RHNode(node)
-        if self.colsHead == None:
-            self.colsHead = new
-            return
-        elif self.colsHead.node.col > node.col:
-            new.next = self.colsHead
-            self.colsHead = new
-            return
-        current = self.colsHead
-        while current.next and current.next.node.col < node.col:
-            current = current.next
-
-        if current.next == None:
-            current.next = new
-            return
-        if current.next.node.col != node.col: # if the column doesn't exist
-            new.next = current.next
-            current.next = new
-            return
-
-        node.down = current.next.node
-        current.next.node.up = node
-        new.next = current.next.next
-        current.next = new
-
-    def setRowHead(self, node):
-        new = RHNode(node)
-        if self.rowsHead == None:
-            self.rowsHead = new
-            return
-        elif self.rowsHead.node.row > node.row:
-            new.next = self.rowsHead
-            self.rowsHead = new
-        current = self.rowsHead
-        while current.next and current.next.node.row < node.row:
-            current = current.next
-
-        if current.next == None:
-            current.next = new
-            return
-        elif current.next.node.row != node.row:  # if the row doesn't exist
-            new.next = current.next
-            current.next = new
-            return
-
-        node.right = current.next.node
-        current.next.node.left = node
-        new.next = current.next.next
-        current.next = new
-        
-
-    # def addNode(self, node):
-    #     """Adds a node to the grid."""
-    #     # Add to the row header list
-    #     row_head = self.getRowHead(node.row)
-    #     if not row_head:
-    #         # Create a new row header and insert it in the correct position
-    #         new_row = RHNode(node)
-    #         if not self.rowsHead or self.rowsHead.node.row > node.row:
-    #             # Insert at the beginning
-    #             new_row.next = self.rowsHead
-    #             self.rowsHead = new_row
-    #         else:
-    #             # Traverse to find the correct position
-    #             current = self.rowsHead
-    #             while current.next and current.next.node.row < node.row:
-    #                 current = current.next
-    #             new_row.next = current.next
-    #             current.next = new_row
-    #     else:
-    #         # Add node to the existing row
-    #         tail = row_head.node.get_right_tail()
-    #         tail.right = node
-    #         node.left = tail
-
-    #     # Add to the column header list
-    #     col_node = self.getColHead(node.col)
-    #     if not col_node:
-    #         # Create a new column header and insert it in the correct position
-    #         new_col = RHNode(node)
-    #         if not self.colsHead or self.colsHead.node.col > node.col:
-    #             # Insert at the beginning
-    #             new_col.next = self.colsHead
-    #             self.colsHead = new_col
-    #         else:
-    #             # Traverse to find the correct position
-    #             current = self.colsHead
-    #             while current.next and current.next.node.col < node.col:
-    #                 current = current.next
-    #             new_col.next = current.next
-    #             current.next = new_col
-    #     else:
-    #         # Add node to the existing column
-    #         tail = col_node.node.get_down_tail()
-    #         tail.down = node
-    #         node.up = tail
-
 
     def getNode(self, row, column):
         """Retrieves a node from the grid by its position."""
@@ -421,3 +331,35 @@ class Grid:
                 return current
             current = current.next
         return None
+    
+    def updateCellsStatus(self) -> None:
+        for i in range(self.size):
+            for j in range(self.size):
+                self.cellsStatus[i][j] = (self.getNode(i, j) != None)
+
+    def getRandomEmptyCell(self) -> tuple:
+        self.updateCellsStatus()
+        empty = []
+
+        for i in range(self.size):
+            for j in range(self.size):
+                if not self.cellsStatus[i][j]:
+                    empty.append((i, j))
+
+        if len(empty) == 0:
+            return None
+        
+        x, y = empty[random.randint(0, len(empty) - 1)]
+        print(f"Grid: get_random_empty_cell: Found empty cell at {x}, {y}")
+        return (x, y)
+    
+    def addRandomNode(self) -> None:
+        empty = self.getRandomEmptyCell()
+        if empty == None:
+            print("Grid: add_random_node: No empty cell found")
+            return
+        
+        x, y = empty
+        values = [2, 2, 2, 2, 2, 2, 2, 4, 4, 4]
+        value = values[random.randint(0, 9)]
+        self.addNode(Node(value, x, y))
