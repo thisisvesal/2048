@@ -21,6 +21,9 @@ class History:
         self.top.next = item
         self.top = item
 
+        print("Last grid added to history:")
+        print(item)
+
     def pop(self):
         if self.top == None:
             return None
@@ -28,5 +31,6 @@ class History:
         self.count -= 1
         item = self.top
         self.top = self.top.prev
-        self.top.next = None
+        if self.top:
+            self.top.next = None
         return item

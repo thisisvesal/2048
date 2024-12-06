@@ -42,10 +42,12 @@ def draw_grid():
         for col in range(GRID_SIZE):
             x = MARGIN + col * (CELL_SIZE + MARGIN)
             y = MARGIN + row * (CELL_SIZE + MARGIN)
-            pygame.draw.rect(screen, CELL_COLOR, (x, y, CELL_SIZE, CELL_SIZE))
             
             # Display the cell value if it
             node = grid.getNode(row, col)
+
+            pygame.draw.rect(screen, get_tile_style(node)[1], (x, y, CELL_SIZE, CELL_SIZE))
+
             if node == None: # if no node in the location
                 # print(f"Game: draw_grid: {row}, {col} is None")
                 continue
@@ -57,11 +59,32 @@ def draw_grid():
                 # print(f"Game: draw_grid: {node} is 0")
                 continue
             
-            text = FONT.render(str(value), True, FONT_COLOR)
+            text = FONT.render(str(value), True, get_tile_style(node)[0])
             text_rect = text.get_rect(center=(x + CELL_SIZE // 2, y + CELL_SIZE // 2))
             screen.blit(text, text_rect)
 
-            # print("Game: draw_grid: just drew ", node)
+def get_tile_style(node):
+    """Returns the font and background color for a tile based on its value."""
+    if node == None:
+        return (FONT_COLOR, CELL_COLOR)
+    tile_styles = [
+        ((119, 110, 101), (238, 228, 218)),  # 2
+        ((119, 110, 101), (237, 224, 200)),  # 4
+        ((249, 246, 242), (242, 177, 121)),  # 8
+        ((249, 246, 242), (245, 149, 99)),   # 16
+        ((249, 246, 242), (246, 124, 95)),   # 32
+        ((249, 246, 242), (246, 94, 59)),    # 64
+        ((249, 246, 242), (237, 207, 114)),  # 128
+        ((249, 246, 242), (237, 204, 97)),   # 256
+        ((249, 246, 242), (237, 200, 80)),   # 512
+        ((249, 246, 242), (237, 197, 63)),   # 1024
+        ((249, 246, 242), (237, 194, 46)),   # 2048
+    ]
+    index = int(node.value).bit_length() - 2
+    if 0 <= index % 11 < len(tile_styles):
+        return tile_styles[index % 11]
+    return (FONT_COLOR, CELL_COLOR)
+    # return tile_styles.get(node.value, ((249, 246, 242), (60, 58, 50)))
 
 
 def draw_side_panel():
@@ -86,7 +109,18 @@ def draw_side_panel():
     button_text_rect = button_text.get_rect(center=button_rect.center)
     screen.blit(button_text, button_text_rect)
     
-    return button_rect
+    # return button_rect
+    # Draw undo button
+    undo_button_rect = pygame.Rect(panel_x + 20, 220, SIDE_PANEL_WIDTH - 40, 50)
+    undo_button_color = BUTTON_HOVER_COLOR if undo_button_rect.collidepoint(mouse_pos) else BUTTON_COLOR
+    pygame.draw.rect(screen, undo_button_color, undo_button_rect)
+    
+    # Undo button text
+    undo_button_text = BUTTON_FONT.render("Undo", True, BACKGROUND_COLOR)
+    undo_button_text_rect = undo_button_text.get_rect(center=undo_button_rect.center)
+    screen.blit(undo_button_text, undo_button_text_rect)
+    
+    return button_rect, undo_button_rect
 
 
 def reset_game():
@@ -94,6 +128,8 @@ def reset_game():
     global grid, score
     grid = Grid(GRID_SIZE)
     score = 0
+    grid.addRandomNode()
+    grid.addRandomNode()
 
 def undo():
     """Undo the last move."""
@@ -118,8 +154,17 @@ def move(direction):
     global grid, score
     # history.push(grid)
     # print(f"Game: move: Pushed {grid} to history")
+
+    # grid = deepcopy(grid)
     grid.move(direction)
     print(f"Game: move: Moved {direction}")
-    # grid = deepcopy(grid)
     score = grid.score
     print(f"Game: move: \n{grid}")
+
+def undo():
+    """Undo the last move."""
+    global grid, score
+    lastGrid = history.pop()
+    if lastGrid:
+        grid = lastGrid
+        score = lastGrid.score

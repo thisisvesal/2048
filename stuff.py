@@ -1,3 +1,4 @@
+"""Suggested grid class. Didn't go with it though"""
 class Grid:
     def __init__(self, size: int, prev=None) -> None:
         if size < 2:

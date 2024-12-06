@@ -34,15 +34,15 @@ class Grid:
         """Moves a given node to the specified row and column."""
         # Remove the node from its current position
         self.removeNode(node)
-        print(f"{node} removed")
-        print(self)
+        # print(f"{node} removed")
+        # print(self)
 
         # Place it at the new position
         node.row = row
         node.col = column
-        print(f"{node} added")
+        # print(f"{node} added")
         self.addNode(node)
-        print(self)
+        # print(self)
 
     def moveNodeToColumn(self, node, column):
         """Moves a given node to a specific column."""
@@ -259,6 +259,8 @@ class Grid:
             row = 0
             while current:
                 self.moveNodeTo(current, row, current.col)
+                if current.down and current.down.value == current.value:
+                    self.merge(current, current.down)
                 row += 1
                 current = current.down
             col = col.next
@@ -271,6 +273,8 @@ class Grid:
             row = self.size - 1
             while current:
                 self.moveNodeTo(current, row, current.col)
+                if current.up and current.up.value == current.value:
+                    self.merge(current, current.up)
                 row -= 1
                 current = current.up
             col = col.next
@@ -283,6 +287,8 @@ class Grid:
             col = 0
             while current:
                 self.moveNodeTo(current, current.row, col)
+                if current.right and current.right.value == current.value:
+                    self.merge(current, current.right)
                 col += 1
                 current = current.right
             row = row.next
@@ -295,6 +301,8 @@ class Grid:
             col = self.size - 1
             while current:
                 self.moveNodeTo(current, current.row, col)
+                if current.left and current.left.value == current.value:
+                    self.merge(current, current.left)
                 col -= 1
                 current = current.left
             row = row.next
@@ -308,6 +316,8 @@ class Grid:
             self.moveDown()
         elif direction == "right" or direction == "d":
             self.moveRight()
+
+        self.addRandomNode()
 
     def merge(self, one: Node, other: Node) -> None:
         one.value += other.value

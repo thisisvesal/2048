@@ -33,9 +33,7 @@ def start():
     # print(grid)
 
     grid.addRandomNode()
-    print(grid)
     grid.addRandomNode()
-    print(grid)
 
 
 # Main Loop
@@ -49,6 +47,8 @@ def update():
                 if event.button == 1:  # Left mouse button
                     if restart_button.collidepoint(event.pos):
                         reset_game()
+                    elif undo_button.collidepoint(event.pos):
+                        undo()
             elif event.type == pygame.KEYDOWN:
                 if event.key == K_UP:
                     move("up")
@@ -65,7 +65,7 @@ def update():
             screen.fill(BACKGROUND_COLOR)
             draw_grid()
 
-            restart_button = draw_side_panel()
+            restart_button, undo_button = draw_side_panel()
 
             pygame.display.flip()
 
