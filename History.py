@@ -5,6 +5,15 @@ class History:
         self.top = None
         self.bottom = None
 
+    def __repr__(self):
+        ans = ""
+        cur = self.top
+        while cur:
+            ans += str(cur) + "\n"
+            cur = cur.prev
+
+        return ans
+
     def push(self, item) -> None:
         self.count += 1
         if self.top == None:
@@ -21,9 +30,6 @@ class History:
         self.top.next = item
         self.top = item
 
-        print("Last grid added to history:")
-        print(item)
-
     def pop(self):
         if self.top == None:
             return None
@@ -31,11 +37,15 @@ class History:
         self.count -= 1
         item = self.top
         self.top = self.top.prev
+
         if self.top:
             self.top.next = None
+        else:
+            self.bottom = None
+
         return item
     
     def clear(self):
         self.top = None
         self.bottom = None
-        count = 0
+        self.count = 0

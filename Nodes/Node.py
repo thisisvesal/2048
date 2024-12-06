@@ -11,6 +11,15 @@ class Node:
     def __repr__(self) -> str:
         return f"Node({self.value}, {self.row}, {self.col})"
     
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, Node):
+            return False
+        
+        return self.value == other.value and self.row == other.row and self.col == other.col
+    
+    def __ne__(self, other):
+        return not self.__eq__(other)
+    
     def get_down_tail(self):
         current = self
         while current.down != None:

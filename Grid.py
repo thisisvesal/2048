@@ -3,12 +3,13 @@ from Nodes.RHNode import RHNode
 from Nodes.Node import Node
 
 class Grid:
-    def __init__(self, size: int, prev=None) -> None:
+    def __init__(self, size: int, maxTile=2048, prev=None) -> None:
         if size < 2:
             print("Grid: __init__: Grid size must be at least 2")
             return
 
         self.size = size
+        self.maxTile = maxTile
         self.cellsStatus = [[False for _ in range(size)] for _ in range(size)]
         self.rowsHead = None  # Head of the rows' linked list
         self.colsHead = None  # Head of the columns' linked list
@@ -29,6 +30,28 @@ class Grid:
             ans += "\n"
 
         return ans
+    
+    def __eq__(self, other):
+        if not isinstance(other, Grid):
+            print("Other is not a grid -> unequal")
+            return False
+        elif self.size != other.size:
+            print("The grid sizes don't match -> unequal")
+            return False
+        # elif self.score != other.score:
+        #     return False
+        
+        for i in range(self.size):
+            for j in range(self.size):
+                if self.getNode(i, j) != other.getNode(i, j):
+                    print(f"{self.getNode(i, j)} != {other.getNode(i, j)}")
+                    return False
+                
+        return True
+    
+    def __ne__(self, other):
+        return not self.__eq__(other)
+            
 
     def moveNodeTo(self, node, row, column):
         """Moves a given node to the specified row and column."""
@@ -317,7 +340,7 @@ class Grid:
         elif direction == "right" or direction == "d":
             self.moveRight()
 
-        self.addRandomNode()
+        # self.addRandomNode()
 
     def merge(self, one: Node, other: Node) -> None:
         one.value += other.value
@@ -373,3 +396,43 @@ class Grid:
         values = [2, 2, 2, 2, 2, 2, 2, 4, 4, 4]
         value = values[random.randint(0, 9)]
         self.addNode(Node(value, x, y))
+
+    def canMergeInRow(self) -> bool:
+        head = self.rowsHead
+        while head != None:
+            current = head.node
+            while current != None and current.right != None:
+                if current.value == current.right.value:
+                    return True
+                current = current.right
+            head = head.next
+        return False
+    
+    def canMergeInCol(self) -> bool:
+        head = self.colsHead
+        while head != None:
+            current = head.node
+            while current != None and current.down:
+                if current.value == current.down.value:
+                    return True
+                current = current.down
+            head = head.next
+        return False
+    
+    def canMerge(self) -> bool:
+        return self.canMergeInCol() or self.canMergeInRow()
+    
+    def isGameOver(self):
+        return self.getRandomEmptyCell() == None and not self.canMerge()
+    
+    def hasWon(self):
+        head = self.rowsHead
+        while head:
+            current = head.node
+            while current:
+                if current.value == self.maxTile:
+                    return True
+                current = current.right
+            head = head.next
+        return False
+

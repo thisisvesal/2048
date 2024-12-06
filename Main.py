@@ -34,6 +34,8 @@ def start():
 
     grid.addRandomNode()
     grid.addRandomNode()
+    # grid.addNode(Node(2, 0, 0))
+    # grid.addNode(Node(4, 0, 1))
 
 
 # Main Loop
@@ -47,8 +49,10 @@ def update():
                 if event.button == 1:  # Left mouse button
                     if restart_button.collidepoint(event.pos):
                         reset_game()
-                    elif undo_button.collidepoint(event.pos):
+                    elif not get_onGameOverScreen() and not get_onWinScreen() and undo_button.collidepoint(event.pos):
                         undo()
+                    elif get_onWinScreen() and continue_button.collidepoint(event.pos):
+                        set_status("continue")
             elif event.type == pygame.KEYDOWN:
                 if event.key == K_UP:
                     move("up")
@@ -58,14 +62,24 @@ def update():
                     move("left")
                 elif event.key == K_RIGHT:
                     move("right")
-                elif event.key == K_u:
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_z and pygame.key.get_mods() & pygame.KMOD_CTRL:
                     undo()
 
             # Draw everything
-            screen.fill(BACKGROUND_COLOR)
-            draw_grid()
 
+            screen.fill(BACKGROUND_COLOR)
+
+            
+            
+            
+            draw_grid()
             restart_button, undo_button = draw_side_panel()
+
+
+            if get_status() == "win":
+                restart_button, continue_button = draw_win()
+            elif get_status() == "gameOver":
+                restart_button = draw_game_over()
 
             pygame.display.flip()
 
