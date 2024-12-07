@@ -244,10 +244,7 @@ def move(direction):
         return
     
     if last_undo:
-        history.clear()
         redoStack.clear()
-        grid.prev = None
-        grid.next = None
         last_undo = False
 
     history.push(grid)
@@ -268,6 +265,8 @@ def undo():
     lastGrid = history.top
     if lastGrid != None:
         history.pop()
+        # grid.prev = None
+        # grid.next = None
         redoStack.push(grid)
         grid = lastGrid
         score = lastGrid.score

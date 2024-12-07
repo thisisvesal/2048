@@ -17,6 +17,8 @@ class History:
     def push(self, item) -> None:
         self.count += 1
         if self.top == None:
+            item.prev = None
+            item.next = None
             self.top = item
             self.bottom = item
             return
