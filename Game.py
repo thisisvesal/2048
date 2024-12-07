@@ -184,7 +184,6 @@ def draw_side_panel():
     button_text_rect = button_text.get_rect(center=button_rect.center)
     screen.blit(button_text, button_text_rect)
     
-    # return button_rect
     # Draw undo button
     undo_button_rect = pygame.Rect(panel_x + 20, 220, SIDE_PANEL_WIDTH - 40, 50)
     undo_button_color = BUTTON_HOVER_COLOR if undo_button_rect.collidepoint(mouse_pos) else BUTTON_COLOR
@@ -195,7 +194,17 @@ def draw_side_panel():
     undo_button_text_rect = undo_button_text.get_rect(center=undo_button_rect.center)
     screen.blit(undo_button_text, undo_button_text_rect)
     
-    return button_rect, undo_button_rect
+    # Draw redo button
+    redo_button_rect = pygame.Rect(panel_x + 20, 290, SIDE_PANEL_WIDTH - 40, 50)
+    redo_button_color = BUTTON_HOVER_COLOR if redo_button_rect.collidepoint(mouse_pos) else BUTTON_COLOR
+    pygame.draw.rect(screen, redo_button_color, redo_button_rect)
+    
+    # Redo button text
+    redo_button_text = BUTTON_FONT.render("Redo", True, BACKGROUND_COLOR)
+    redo_button_text_rect = redo_button_text.get_rect(center=redo_button_rect.center)
+    screen.blit(redo_button_text, redo_button_text_rect)
+    
+    return button_rect, undo_button_rect, redo_button_rect
 
 
 def reset_game():

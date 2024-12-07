@@ -49,6 +49,8 @@ def update():
                         reset_game()
                     elif not get_onGameOverScreen() and not get_onWinScreen() and undo_button.collidepoint(event.pos):
                         undo()
+                    elif not get_onGameOverScreen() and not get_onWinScreen() and redo_button.collidepoint(event.pos):
+                        redo()
                     elif get_onWinScreen() and continue_button.collidepoint(event.pos):
                         set_status("continue")
             elif event.type == pygame.KEYDOWN:
@@ -70,7 +72,7 @@ def update():
             screen.fill(BACKGROUND_COLOR)
             
             draw_grid()
-            restart_button, undo_button = draw_side_panel()
+            restart_button, undo_button, redo_button = draw_side_panel()
 
             if get_status() == "win":
                 restart_button, continue_button = draw_win()
