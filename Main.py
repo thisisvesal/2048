@@ -2,6 +2,7 @@ import pygame
 import sys
 from Game import *
 from pygame.locals import *
+from Nodes.Node import Node
 
 def start():
     print("2048 by Vesal")
@@ -29,6 +30,9 @@ def update():
                         redo()
                     elif get_onWinScreen() and continue_button.collidepoint(event.pos):
                         set_status("continue")
+                    elif get_onGameOverScreen() and quit_button.collidepoint(event.pos):
+                        pygame.quit()
+                        sys.exit()
             elif event.type == pygame.KEYDOWN and not get_onGameOverScreen() and not get_onWinScreen():
                 if event.key == K_UP or event.key == K_w:
                     move("up")
@@ -52,6 +56,8 @@ def update():
                 restart_button, continue_button = draw_win()
             elif get_status() == "gameOver":
                 restart_button = draw_game_over()
+            elif get_status() == "addict":
+                quit_button = draw_custom_text("Ok you win, now get a life :)", "Get life")
 
             pygame.display.flip()
 

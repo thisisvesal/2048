@@ -36,7 +36,7 @@ onWinScreen = False
 history = History(HISTORY_CAPACITY)
 redoStack = History(HISTORY_CAPACITY)
 last_undo = False # to check if the last move was an undo. See usage in move function
-status = "play" # play, win, gameOver, continue
+status = "play" # play, win, gameOver, continue, addict
 
 # Initialize grid
 grid = Grid(GRID_SIZE, MAX_TILE)
@@ -45,6 +45,7 @@ score = grid.score
 
 def draw_grid():
     """Draws the grid on the screen"""
+    global status
     for row in range(GRID_SIZE):
         for col in range(GRID_SIZE):
             x = MARGIN + col * (CELL_SIZE + MARGIN)
@@ -56,10 +57,51 @@ def draw_grid():
 
             if node == None: # if no node in the location
                 continue
+
+            if node.value < 10000:
+                display_value = str(node.value)
+            elif node.value < 10000000:
+                display_value = str(node.value // 1000) + "K"
+            elif node.value < 10000000000:
+                display_value = str(node.value // 1000000) + "M"
+            elif node.value < 10000000000000:
+                display_value = str(node.value // 1000000000) + "B"
+            else:
+                display_value = str(node.value // 1000000000000) + "KB"
+                status = "addict"
             
-            text = FONT.render(str(node.value), True, get_tile_style(node)[0])
+            text = FONT.render(display_value, True, get_tile_style(node)[0])
             text_rect = text.get_rect(center=(x + CELL_SIZE // 2, y + CELL_SIZE // 2))
             screen.blit(text, text_rect)
+
+def draw_custom_text(customText: str, buttonText: str):
+    """Displays the game over screen"""
+    global onGameOverScreen
+
+    overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+    overlay.set_alpha(128)  # transparency level
+    overlay.fill((238, 228, 218, 200)) 
+    screen.blit(overlay, (0, 0))
+
+    # Draw custom text
+    custom_text = FONT.render(customText, True, BUTTON_COLOR)
+    custom_rect = custom_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 50))
+    screen.blit(custom_text, custom_rect)
+
+    # Draw restart button
+    button_rect = pygame.Rect(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2, 200, 50)
+    mouse_pos = pygame.mouse.get_pos()
+    button_color = BUTTON_HOVER_COLOR if button_rect.collidepoint(mouse_pos) else BUTTON_COLOR
+    pygame.draw.rect(screen, button_color, button_rect)
+
+    # Button text
+    button_text = BUTTON_FONT.render(buttonText, True, (237, 224, 200))
+    button_text_rect = button_text.get_rect(center=button_rect.center)
+    screen.blit(button_text, button_text_rect)
+
+    onGameOverScreen = True
+
+    return button_rect
 
 def draw_game_over():
     """Displays the game over screen"""
