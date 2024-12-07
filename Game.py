@@ -265,8 +265,6 @@ def undo():
     lastGrid = history.top
     if lastGrid != None:
         history.pop()
-        # grid.prev = None
-        # grid.next = None
         redoStack.push(grid)
         grid = lastGrid
         score = lastGrid.score
