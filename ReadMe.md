@@ -1,6 +1,6 @@
 # 2048 Game
 
-This is a simple implementation of the 2048 game using Pygame.
+This is a simple implementation of the 2048 game using Pygame with linked list game logic.
 
 ## Installation
 
