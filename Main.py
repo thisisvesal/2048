@@ -29,19 +29,19 @@ def update():
                         redo()
                     elif get_onWinScreen() and continue_button.collidepoint(event.pos):
                         set_status("continue")
-            elif event.type == pygame.KEYDOWN:
-                if event.key == K_UP:
+            elif event.type == pygame.KEYDOWN and not get_onGameOverScreen() and not get_onWinScreen():
+                if event.key == K_UP or event.key == K_w:
                     move("up")
-                elif event.key == K_DOWN:
+                elif event.key == K_DOWN or event.key == K_s:
                     move("down")
-                elif event.key == K_LEFT:
+                elif event.key == K_LEFT or event.key == K_a:
                     move("left")
-                elif event.key == K_RIGHT:
+                elif event.key == K_RIGHT or event.key == K_d:
                     move("right")
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_z and pygame.key.get_mods() & pygame.KMOD_CTRL:
-                    undo()
+                    undo() # on ctrl + z
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_y and pygame.key.get_mods() & pygame.KMOD_CTRL:
-                    redo()
+                    redo() # on ctrl + y
 
             # Draw everything:
             screen.fill(BACKGROUND_COLOR)

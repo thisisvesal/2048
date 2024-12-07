@@ -9,6 +9,7 @@ pygame.init()
 # Constants
 GRID_SIZE = 4
 MAX_TILE = 2048
+HISTORY_CAPACITY = 5
 CELL_SIZE = 100 
 MARGIN = 4  # between cells
 GRID_WIDTH = GRID_SIZE * CELL_SIZE + (GRID_SIZE + 1) * MARGIN
@@ -32,8 +33,8 @@ onGameOverScreen = False
 onWinScreen = False
 
 # Initialize history and redoStack
-history = History(5)
-redoStack = History(5)
+history = History(HISTORY_CAPACITY)
+redoStack = History(HISTORY_CAPACITY)
 last_undo = False # to check if the last move was an undo. See usage in move function
 status = "play" # play, win, gameOver, continue
 
