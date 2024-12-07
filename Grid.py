@@ -11,10 +11,10 @@ class Grid:
         self.size = size
         self.maxTile = maxTile
         self.cellsStatus = [[False for _ in range(size)] for _ in range(size)]
-        self.rowsHead = None  # Head of the rows' linked list
-        self.colsHead = None  # Head of the columns' linked list
-        self.prev = prev  # Previous grid in a linked list of grids
-        self.next = None  # Next grid in a linked list of grids
+        self.rowsHead = None
+        self.colsHead = None
+        self.prev = prev
+        self.next = None
         self.score = 0
 
     def __repr__(self):
@@ -33,18 +33,13 @@ class Grid:
     
     def __eq__(self, other):
         if not isinstance(other, Grid):
-            # print("Other is not a grid -> unequal")
             return False
         elif self.size != other.size:
-            # print("The grid sizes don't match -> unequal")
             return False
-        # elif self.score != other.score:
-        #     return False
         
         for i in range(self.size):
             for j in range(self.size):
                 if self.getNode(i, j) != other.getNode(i, j):
-                    # print(f"{self.getNode(i, j)} != {other.getNode(i, j)}")
                     return False
                 
         return True
@@ -55,17 +50,15 @@ class Grid:
 
     def moveNodeTo(self, node, row, column):
         """Moves a given node to the specified row and column."""
-        # Remove the node from its current position
+        # Remove the node
         self.removeNode(node)
-        # print(f"{node} removed")
-        # print(self)
 
-        # Place it at the new position
+        # Reposition
         node.row = row
         node.col = column
-        # print(f"{node} added")
+
+        # Add updated node
         self.addNode(node)
-        # print(self)
 
     def moveNodeToColumn(self, node, column):
         """Moves a given node to a specific column."""
@@ -340,8 +333,6 @@ class Grid:
         elif direction == "right" or direction == "d":
             self.moveRight()
 
-        # self.addRandomNode()
-
     def merge(self, one: Node, other: Node) -> None:
         one.value += other.value
         self.score += one.value
@@ -383,13 +374,12 @@ class Grid:
             return None
         
         x, y = empty[random.randint(0, len(empty) - 1)]
-        # print(f"Grid: get_random_empty_cell: Found empty cell at {x}, {y}")
+
         return (x, y)
     
     def addRandomNode(self) -> None:
         empty = self.getRandomEmptyCell()
         if empty == None:
-            print("Grid: add_random_node: No empty cell found")
             return
         
         x, y = empty

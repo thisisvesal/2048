@@ -1,5 +1,4 @@
 import pygame
-import sys
 from Grid import Grid
 from History import History
 from copy import deepcopy
@@ -8,10 +7,10 @@ from copy import deepcopy
 pygame.init()
 
 # Constants
-GRID_SIZE = 4  # 4x4 grid
+GRID_SIZE = 4
 MAX_TILE = 2048
-CELL_SIZE = 100  # Cell dimensions in pixels
-MARGIN = 5  # Margin between cells
+CELL_SIZE = 100 
+MARGIN = 4  # between cells
 GRID_WIDTH = GRID_SIZE * CELL_SIZE + (GRID_SIZE + 1) * MARGIN
 SIDE_PANEL_WIDTH = 200
 SCREEN_WIDTH = GRID_WIDTH + SIDE_PANEL_WIDTH
@@ -19,7 +18,6 @@ SCREEN_HEIGHT = GRID_WIDTH
 BACKGROUND_COLOR = (187, 173, 160)
 CELL_COLOR = (205, 193, 180)
 FONT_COLOR = (119, 110, 101)
-# BUTTON_COLOR = (142, 121, 102)
 BUTTON_COLOR = (112, 91, 72)
 BUTTON_HOVER_COLOR = (170, 150, 130)
 FONT = pygame.font.Font(None, 40)
@@ -29,18 +27,19 @@ BUTTON_FONT = pygame.font.Font(None, 35)
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("2048")
 
+# Initialize screen trackers
 onGameOverScreen = False
 onWinScreen = False
 
-# Initialize History
+# Initialize history and redoStack
 history = History(5)
 redoStack = History(5)
-last_undo = False
+last_undo = False # to check if the last move was an undo. See usage in move function
 status = "play" # play, win, gameOver, continue
 
-# Initialize Grid
+# Initialize grid
 grid = Grid(GRID_SIZE, MAX_TILE)
-score = grid.score  # Initialize score
+score = grid.score
 
 
 def draw_grid():
@@ -50,23 +49,14 @@ def draw_grid():
             x = MARGIN + col * (CELL_SIZE + MARGIN)
             y = MARGIN + row * (CELL_SIZE + MARGIN)
             
-            # Display the cell value if it
             node = grid.getNode(row, col)
 
             pygame.draw.rect(screen, get_tile_style(node)[1], (x, y, CELL_SIZE, CELL_SIZE))
 
             if node == None: # if no node in the location
-                # print(f"Game: draw_grid: {row}, {col} is None")
-                continue
-
-            value = node.value
-
-            # Debug
-            if value == 0:
-                # print(f"Game: draw_grid: {node} is 0")
                 continue
             
-            text = FONT.render(str(value), True, get_tile_style(node)[0])
+            text = FONT.render(str(node.value), True, get_tile_style(node)[0])
             text_rect = text.get_rect(center=(x + CELL_SIZE // 2, y + CELL_SIZE // 2))
             screen.blit(text, text_rect)
 
@@ -75,11 +65,11 @@ def draw_game_over():
     global onGameOverScreen
 
     overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
-    overlay.set_alpha(128)  # Set transparency level
+    overlay.set_alpha(128)  # transparency level
     overlay.fill((238, 228, 218, 200)) 
     screen.blit(overlay, (0, 0))
 
-    # Draw "Game Over" text
+    # Draw Game Over text
     game_over_text = FONT.render("Game Over", True, BUTTON_COLOR)
     game_over_rect = game_over_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 50))
     screen.blit(game_over_text, game_over_rect)
@@ -104,11 +94,11 @@ def draw_win():
     global onWinScreen
 
     overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
-    overlay.set_alpha(128)  # Set transparency level
+    overlay.set_alpha(128)  # transparency level
     overlay.fill((238, 228, 218, 200)) 
     screen.blit(overlay, (0, 0))
 
-    # Draw "You Win!" text
+    # Draw You Win! text
     win_text = FONT.render("You Win!", True, BUTTON_COLOR)
     win_rect = win_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 100))
     screen.blit(win_text, win_rect)
@@ -159,7 +149,6 @@ def get_tile_style(node):
     if 0 <= index % 11 < len(tile_styles):
         return tile_styles[index % 11]
     return (FONT_COLOR, CELL_COLOR)
-    # return tile_styles.get(node.value, ((249, 246, 242), (60, 58, 50)))
 
 
 def draw_side_panel():
@@ -250,10 +239,7 @@ def move(direction):
     """Moves the grid in the specified direction."""
     global grid, score, history, last_undo, status
 
-    print(f"Moving {direction}")
-
     if not is_move_valid(grid, direction):
-        print("Invalid move")
         return
     
     if last_undo:
@@ -262,32 +248,21 @@ def move(direction):
         grid.prev = None
         grid.next = None
         last_undo = False
-        print("Cleared history")
-        print(f"Last_undo: {last_undo}")
 
     history.push(grid)
-
-    # print(f"Game: move: Moving {direction}")
-    # print(f"Game: move: Pushed {grid} to history")
 
     grid = deepcopy(grid)
     grid.move(direction)
     grid.addRandomNode()
     score = grid.score
 
-    print(f"Moved {direction}")
-    print(grid)
-
     if grid.hasWon() and status != "continue":
         status = "win"
-        print("You Win!")
     elif grid.isGameOver():
         status = "gameOver"
-        print("Game Over")
 
 def undo():
     """Undo the last move."""
-    print("Undoing last move")
     global grid, score, last_undo, history
     lastGrid = history.top
     if lastGrid != None:
@@ -296,13 +271,9 @@ def undo():
         grid = lastGrid
         score = lastGrid.score
         last_undo = True
-        print("Last move undone")
-    else:
-        print("No more moves to undo")
 
 def redo():
     """Redo the last undo."""
-    print("Redoing last undo")
     global grid, score, last_undo, redoStack
     lastGrid = redoStack.top
     if lastGrid != None:
@@ -312,15 +283,11 @@ def redo():
         score = lastGrid.score
         if redoStack.top == None:
             last_undo = False
-        print("Last undo redone")
-    else:
-        print("No more undos to redo")
 
 def is_move_valid(somegrid, direction):
     """Returns True if the last move was valid."""
 
     gridCopy = deepcopy(somegrid)
     gridCopy.move(direction)
-    # print(f"The grids are {'not ' if gridCopy != somegrid else ''}equal")
 
     return gridCopy != somegrid
