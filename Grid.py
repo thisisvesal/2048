@@ -49,7 +49,7 @@ class Grid:
             
 
     def moveNodeTo(self, node, row, column):
-        """Moves a given node to the specified row and column."""
+        """Moves a given node to the specified row and column"""
         # Remove the node
         self.removeNode(node)
 
@@ -61,12 +61,13 @@ class Grid:
         self.addNode(node)
 
     def moveNodeToColumn(self, node, column):
-        """Moves a given node to a specific column."""
+        """Moves a given node to a specific column"""
         self.removeNode(node)
         node.col = column
         self.addNode(node)
 
     def removeColumn(self, col):
+        """Removes a column from the grid"""
         if self.getColHead(col) == None:
             return
         if self.colsHead.node.col == col:
@@ -81,6 +82,7 @@ class Grid:
         current.next = current.next.next
 
     def removeRow(self, row):
+        """Removes a row from the grid"""
         if self.getRowHead(row) == None:
             return
         if self.rowsHead.node.row == row:
@@ -95,7 +97,7 @@ class Grid:
         current.next = current.next.next
 
     def removeNode(self, node):
-        """Removes a node from the grid."""
+        """Removes a node from the grid"""
         if node.up:
             node.up.down = node.down
         elif node.down:
@@ -121,7 +123,12 @@ class Grid:
         self.updateColHeads()
         self.updateRowHeads()
 
+    # The following four methods are used to get the node that should be in a specific direction respective to the input node
+    # So at the point where this is called, the return value is not necessarily actually next to the input node
+    # But it should be position wise
+
     def getNodeUp(self, node: Node) -> Node:
+        """Returns the node that should be above the given node"""
         if not self.getColHead(node.col):
             return None
         
@@ -139,6 +146,7 @@ class Grid:
         return cur
     
     def getNodeDown(self, node: Node) -> Node:
+        """Returns the node that should be below the given node"""
         if not self.getColHead(node.col):
             return None
 
@@ -156,6 +164,7 @@ class Grid:
         return cur
     
     def getNodeLeft(self, node: Node) -> Node:
+        """Returns the node that should be to the left of the given node"""
         if not self.getRowHead(node.row):
             return None
 
@@ -173,6 +182,7 @@ class Grid:
         return cur
     
     def getNodeRight(self, node: Node) -> Node:
+        """Returns the node that should be to the right of the given node"""
         if not self.getRowHead(node.row):
             return None
 
@@ -191,6 +201,7 @@ class Grid:
 
     
     def addNode(self, node):
+        """Add a node to the grid"""
         if self.getColHead(node.col) == None:
             new = RHNode(node)
             
@@ -238,6 +249,7 @@ class Grid:
         self.updateRowHeads()
 
     def updateColHeads(self):
+        """Updates the column heads"""
         current = self.colsHead
         while current:
             current.node = current.node.get_up_tail()
@@ -247,6 +259,7 @@ class Grid:
                 current = current.next
 
     def updateRowHeads(self):
+        """Update the row heads"""
         current = self.rowsHead
         while current:
             current.node = current.node.get_left_tail()
@@ -256,7 +269,7 @@ class Grid:
                 current = current.next
 
     def getNode(self, row, column):
-        """Retrieves a node from the grid by its position."""
+        """Gets a node from the grid by its position"""
         current = self.rowsHead
         while current:
             if current.node.row == row:
@@ -268,7 +281,7 @@ class Grid:
         return None
 
     def moveUp(self):
-        """Moves all nodes up in their respective columns."""
+        """Moves all nodes up in their respective columns"""
         col = self.colsHead
         while col:
             current = col.node
@@ -282,7 +295,7 @@ class Grid:
             col = col.next
 
     def moveDown(self):
-        """Moves all nodes down in their respective columns."""
+        """Moves all nodes down in their respective columns"""
         col = self.colsHead
         while col:
             current = col.node.get_down_tail()
@@ -296,7 +309,7 @@ class Grid:
             col = col.next
 
     def moveLeft(self):
-        """Moves all nodes left in their respective rows."""
+        """Moves all nodes left in their respective rows"""
         row = self.rowsHead
         while row:
             current = row.node
@@ -310,7 +323,7 @@ class Grid:
             row = row.next
 
     def moveRight(self):
-        """Moves all nodes right in their respective rows."""
+        """Moves all nodes right in their respective rows"""
         row = self.rowsHead
         while row:
             current = row.node.get_right_tail()
@@ -324,6 +337,7 @@ class Grid:
             row = row.next
 
     def move(self, direction):
+        """Moves the grid nodes in the specified direction"""
         if direction == "up" or direction == "w":
             self.moveUp()
         elif direction == "left" or direction == "a":
@@ -334,12 +348,13 @@ class Grid:
             self.moveRight()
 
     def merge(self, one: Node, other: Node) -> None:
+        "Merges two nodes into the first one"
         one.value += other.value
         self.score += one.value
         self.removeNode(other)
 
     def getRowHead(self, row):
-        """Returns the head node of a specific row."""
+        """Returns the head node of a specific row"""
         current = self.rowsHead
         while current:
             if current.node.row == row:
@@ -348,7 +363,7 @@ class Grid:
         return None
 
     def getColHead(self, column):
-        """Returns the head node of a specific column."""
+        """Returns the head node of a specific column"""
         current = self.colsHead
         while current:
             if current.node.col == column:
@@ -357,11 +372,13 @@ class Grid:
         return None
     
     def updateCellsStatus(self) -> None:
+        """Updates the occupation status of the cells"""
         for i in range(self.size):
             for j in range(self.size):
                 self.cellsStatus[i][j] = (self.getNode(i, j) != None)
 
     def getRandomEmptyCell(self) -> tuple:
+        """Returns a random empty cell position"""
         self.updateCellsStatus()
         empty = []
 
@@ -378,16 +395,18 @@ class Grid:
         return (x, y)
     
     def addRandomNode(self) -> None:
+        """Adds a new node with a value of 2 or 4 to a random empty cell"""
         empty = self.getRandomEmptyCell()
         if empty == None:
             return
         
         x, y = empty
-        values = [2, 2, 2, 2, 2, 2, 2, 4, 4, 4]
+        values = [2, 2, 2, 2, 2, 2, 2, 4, 4, 4] # 70% chance of getting 2, 30% chance of getting 4
         value = values[random.randint(0, 9)]
         self.addNode(Node(value, x, y))
 
     def canMergeInRow(self) -> bool:
+        """Checks if any two nodes can be merged horizontally"""
         head = self.rowsHead
         while head != None:
             current = head.node
@@ -399,6 +418,7 @@ class Grid:
         return False
     
     def canMergeInCol(self) -> bool:
+        """Checks if any two nodes can be merged vertically"""
         head = self.colsHead
         while head != None:
             current = head.node
@@ -410,12 +430,17 @@ class Grid:
         return False
     
     def canMerge(self) -> bool:
+        """Checks if any two nodes can be merged"""
         return self.canMergeInCol() or self.canMergeInRow()
     
     def isGameOver(self):
+        """Checks if no more moves can be made and game is over"""
+        # Basically checks if there are any empty cells or if anything can be merged
+        # If neither holds, game is over
         return self.getRandomEmptyCell() == None and not self.canMerge()
     
     def hasWon(self):
+        """Checks if the player has won the game"""
         head = self.rowsHead
         while head:
             current = head.node
@@ -425,4 +450,5 @@ class Grid:
                 current = current.right
             head = head.next
         return False
+    
 

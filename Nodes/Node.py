@@ -21,24 +21,28 @@ class Node:
         return not self.__eq__(other)
     
     def get_down_tail(self):
+        """"Gets the last node in the down direction"""
         current = self
         while current.down != None:
             current = current.down
         return current
     
     def get_right_tail(self):
+        """"Gets the last node in the right direction"""
         current = self
         while current.right != None:
             current = current.right
         return current
     
     def get_up_tail(self):
+        """"Gets the last node in the up direction"""
         current = self
         while current.up != None:
             current = current.up
         return current
 
     def get_left_tail(self):
+        """"Gets the last node in the left direction"""
         current = self
         while current.left != None:
             current = current.left

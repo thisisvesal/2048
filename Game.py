@@ -44,7 +44,7 @@ score = grid.score
 
 
 def draw_grid():
-    """Draws the grid on the screen."""
+    """Draws the grid on the screen"""
     for row in range(GRID_SIZE):
         for col in range(GRID_SIZE):
             x = MARGIN + col * (CELL_SIZE + MARGIN)
@@ -62,7 +62,7 @@ def draw_grid():
             screen.blit(text, text_rect)
 
 def draw_game_over():
-    """Displays the game over screen."""
+    """Displays the game over screen"""
     global onGameOverScreen
 
     overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
@@ -91,7 +91,7 @@ def draw_game_over():
     return button_rect
 
 def draw_win():
-    """Displays the game over screen."""
+    """Displays the game over screen"""
     global onWinScreen
 
     overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
@@ -130,7 +130,7 @@ def draw_win():
     return restart_button_rect, continue_button_rect
 
 def get_tile_style(node):
-    """Returns the font and background color for a tile based on its value."""
+    """Returns the font and background color for a tile based on its value"""
     if node == None:
         return (FONT_COLOR, CELL_COLOR)
     tile_styles = [
@@ -153,7 +153,7 @@ def get_tile_style(node):
 
 
 def draw_side_panel():
-    """Draws the score and restart button on the right side."""
+    """Draws the score and restart button on the right side"""
     panel_x = GRID_WIDTH + MARGIN
     # Draw score label
     score_label = FONT.render("Score:", True, FONT_COLOR)
@@ -198,7 +198,7 @@ def draw_side_panel():
 
 
 def reset_game():
-    """Resets the grid and score."""
+    """Resets the grid and score"""
     global grid, score, history, last_undo, status, onGameOverScreen, onWinScreen
     onGameOverScreen = False
     onWinScreen = False
@@ -211,12 +211,12 @@ def reset_game():
     grid.addRandomNode()
 
 def get_current_grid():
-    """Returns the current grid."""
+    """Returns the current grid"""
     global grid
     return grid
 
 def get_max_tile():
-    """Returns the maximum tile value on the grid."""
+    """Returns the maximum tile value on the grid"""
     global grid
     return grid.max_tile
 
@@ -237,7 +237,7 @@ def get_onWinScreen():
     return onWinScreen
 
 def move(direction):
-    """Moves the grid in the specified direction."""
+    """Moves the grid in the specified direction"""
     global grid, score, history, last_undo, status
 
     if not is_move_valid(grid, direction):
