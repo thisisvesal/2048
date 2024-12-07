@@ -62,6 +62,8 @@ def update():
                     move("right")
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_z and pygame.key.get_mods() & pygame.KMOD_CTRL:
                     undo()
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_y and pygame.key.get_mods() & pygame.KMOD_CTRL:
+                    redo()
 
             # Draw everything
 

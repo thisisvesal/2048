@@ -249,6 +249,7 @@ def move(direction):
     
     if last_undo:
         history.clear()
+        redoStack.clear()
         grid.prev = None
         grid.next = None
         last_undo = False
@@ -282,12 +283,29 @@ def undo():
     lastGrid = history.top
     if lastGrid != None:
         history.pop()
+        redoStack.push(grid)
         grid = lastGrid
         score = lastGrid.score
         last_undo = True
         print("Last move undone")
     else:
         print("No more moves to undo")
+
+def redo():
+    """Redo the last undo."""
+    print("Redoing last undo")
+    global grid, score, last_undo, redoStack
+    lastGrid = redoStack.top
+    if lastGrid != None:
+        redoStack.pop()
+        history.push(grid)
+        grid = lastGrid
+        score = lastGrid.score
+        if redoStack.top == None:
+            last_undo = False
+        print("Last undo redone")
+    else:
+        print("No more undos to redo")
 
 def is_move_valid(somegrid, direction):
     """Returns True if the last move was valid."""
