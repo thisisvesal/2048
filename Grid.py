@@ -33,10 +33,10 @@ class Grid:
     
     def __eq__(self, other):
         if not isinstance(other, Grid):
-            print("Other is not a grid -> unequal")
+            # print("Other is not a grid -> unequal")
             return False
         elif self.size != other.size:
-            print("The grid sizes don't match -> unequal")
+            # print("The grid sizes don't match -> unequal")
             return False
         # elif self.score != other.score:
         #     return False
@@ -44,7 +44,7 @@ class Grid:
         for i in range(self.size):
             for j in range(self.size):
                 if self.getNode(i, j) != other.getNode(i, j):
-                    print(f"{self.getNode(i, j)} != {other.getNode(i, j)}")
+                    # print(f"{self.getNode(i, j)} != {other.getNode(i, j)}")
                     return False
                 
         return True
@@ -383,7 +383,7 @@ class Grid:
             return None
         
         x, y = empty[random.randint(0, len(empty) - 1)]
-        print(f"Grid: get_random_empty_cell: Found empty cell at {x}, {y}")
+        # print(f"Grid: get_random_empty_cell: Found empty cell at {x}, {y}")
         return (x, y)
     
     def addRandomNode(self) -> None:

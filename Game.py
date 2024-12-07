@@ -9,7 +9,7 @@ pygame.init()
 
 # Constants
 GRID_SIZE = 4  # 4x4 grid
-MAX_TILE = 8
+MAX_TILE = 2048
 CELL_SIZE = 100  # Cell dimensions in pixels
 MARGIN = 5  # Margin between cells
 GRID_WIDTH = GRID_SIZE * CELL_SIZE + (GRID_SIZE + 1) * MARGIN
@@ -241,25 +241,32 @@ def move(direction):
     """Moves the grid in the specified direction."""
     global grid, score, history, last_undo, status
 
+    print(f"Moving {direction}")
+
     if not is_move_valid(grid, direction):
+        print("Invalid move")
         return
     
     if last_undo:
         history.clear()
+        grid.prev = None
+        grid.next = None
         last_undo = False
+        print("Cleared history")
+        print(f"Last_undo: {last_undo}")
 
     history.push(grid)
 
-    print(f"Game: move: Moving {direction}")
-    print(f"Game: move: Pushed {grid} to history")
+    # print(f"Game: move: Moving {direction}")
+    # print(f"Game: move: Pushed {grid} to history")
 
     grid = deepcopy(grid)
     grid.move(direction)
     grid.addRandomNode()
     score = grid.score
 
-    print(f"Game: move: Moved {direction}")
-    print(f"Game: move: \n{grid}")
+    print(f"Moved {direction}")
+    print(grid)
 
     if grid.hasWon() and status != "continue":
         status = "win"
@@ -270,6 +277,7 @@ def move(direction):
 
 def undo():
     """Undo the last move."""
+    print("Undoing last move")
     global grid, score, last_undo, history
     lastGrid = history.top
     if lastGrid != None:
@@ -277,12 +285,15 @@ def undo():
         grid = lastGrid
         score = lastGrid.score
         last_undo = True
+        print("Last move undone")
+    else:
+        print("No more moves to undo")
 
 def is_move_valid(somegrid, direction):
     """Returns True if the last move was valid."""
 
     gridCopy = deepcopy(somegrid)
     gridCopy.move(direction)
-    print(f"The grids are {'not ' if gridCopy != somegrid else ''}equal")
+    # print(f"The grids are {'not ' if gridCopy != somegrid else ''}equal")
 
     return gridCopy != somegrid

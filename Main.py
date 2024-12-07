@@ -34,8 +34,6 @@ def start():
 
     grid.addRandomNode()
     grid.addRandomNode()
-    # grid.addNode(Node(2, 0, 0))
-    # grid.addNode(Node(4, 0, 1))
 
 
 # Main Loop
@@ -68,13 +66,9 @@ def update():
             # Draw everything
 
             screen.fill(BACKGROUND_COLOR)
-
-            
-            
             
             draw_grid()
             restart_button, undo_button = draw_side_panel()
-
 
             if get_status() == "win":
                 restart_button, continue_button = draw_win()
