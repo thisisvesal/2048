@@ -10,7 +10,6 @@ class Grid:
 
         self.size = size
         self.maxTile = maxTile
-        self.cellsStatus = [[False for _ in range(size)] for _ in range(size)]
         self.rowsHead = None
         self.colsHead = None
         self.prev = prev
@@ -370,21 +369,14 @@ class Grid:
                 return current
             current = current.next
         return None
-    
-    def updateCellsStatus(self) -> None:
-        """Updates the occupation status of the cells"""
-        for i in range(self.size):
-            for j in range(self.size):
-                self.cellsStatus[i][j] = (self.getNode(i, j) != None)
 
     def getRandomEmptyCell(self) -> tuple:
         """Returns a random empty cell position"""
-        self.updateCellsStatus()
         empty = []
 
         for i in range(self.size):
             for j in range(self.size):
-                if not self.cellsStatus[i][j]:
+                if self.getNode(i, j) == None:
                     empty.append((i, j))
 
         if len(empty) == 0:
