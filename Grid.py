@@ -370,14 +370,20 @@ class Grid:
             current = current.next
         return None
 
-    def getRandomEmptyCell(self) -> tuple:
-        """Returns a random empty cell position"""
+    def getEmptyCells(self) -> list:
         empty = []
 
         for i in range(self.size):
             for j in range(self.size):
                 if self.getNode(i, j) == None:
                     empty.append((i, j))
+
+        return empty
+
+
+    def getRandomEmptyCell(self) -> tuple:
+        """Returns a random empty cell position"""
+        empty = self.getEmptyCells()
 
         if len(empty) == 0:
             return None
@@ -442,5 +448,85 @@ class Grid:
                 current = current.right
             head = head.next
         return False
+    
+
+    # Minimax utils:
+
+    def getPresentMaxValue(self):
+        maximum = -1
+
+        head = self.rowsHead
+        while head:
+            current = head.node
+            while current:
+
+                if current.value > maximum:
+                    maximum = current.value
+
+                current = current.right
+            head = head.next
+
+        return maximum
+    
+    def getMaxInRow(self, row: int):
+        maximum = -1
+        head = self.getRowHead(row)
+        if not head:
+            return 0
+        
+        current = head.node
+        while current:
+            if current.value > maximum:
+                maximum = current.value
+            current = current.right
+
+        return maximum
+    
+    def getRowOrderGrade(self, row: int):
+        """Grades tiles' arrangement in a row"""
+        grade = 0
+        head = self.getRowHead(row)
+        if not head:
+            return 0
+        
+        current = head.node
+        while current:
+            grade += current.value
+            current = current.right
+
+        return grade
+
+    def getUpperLeftMostEmpty(self) -> tuple:
+        """Returns the position of the upper left most empty cell"""
+        for i in range(self.size):
+            for j in range(self.size):
+                if self.getNode(i, j) == None:
+                    return (i, j)
+        return None
+    
+    def countRow(self, i: int):
+        """Counts the number of nodes in a row"""
+        count = 0
+        current = self.getRowHead(i)
+        if current == None:
+            return 0
+        current = current.node
+        while current:
+            count += 1
+            current = current.right
+        return count
+    
+    def countCol(self, j: int):
+        """Counts the number of nodes in a column"""
+        count = 0
+        current = self.getColHead(j)
+        if current == None:
+            return 0
+        current = current.node
+        while current:
+            count += 1
+            current = current.down
+        return count
+
     
 

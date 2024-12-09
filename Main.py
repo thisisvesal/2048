@@ -2,7 +2,6 @@ import pygame
 import sys
 from Game import *
 from pygame.locals import *
-from Nodes.Node import Node
 
 def start():
     print("2048 by Vesal")
@@ -13,7 +12,7 @@ def start():
 
     grid.addRandomNode()
     grid.addRandomNode()
-
+    
 def update():
     while True:
         for event in pygame.event.get():
