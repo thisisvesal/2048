@@ -453,7 +453,40 @@ class Grid:
     # Minimax utils:
 
     def countEmptyInRow(self, row: int):
+        """Counts the number of empty cells in a row"""
         return self.size - self.countRow(row)
+    
+    def countEmptyInCol(self, col: int):
+        """Counts the number of empty cells in a column"""
+        return self.size - self.countCol(col)
+    
+    def sumOfRow(self, row: int):
+        """Returns the sum of the values in a row"""
+        sum = 0
+        head = self.getRowHead(row)
+        if not head:
+            return 0
+        
+        current = head.node
+        while current:
+            sum += current.value
+            current = current.right
+
+        return sum
+    
+    def sumOfCol(self, col: int):
+        """Returns the sum of the values in a column"""
+        sum = 0
+        head = self.getColHead(col)
+        if not head:
+            return 0
+        
+        current = head.node
+        while current:
+            sum += current.value
+            current = current.down
+
+        return sum
 
     def getPresentMaxValue(self):
         maximum = -1

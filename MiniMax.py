@@ -18,7 +18,9 @@ def evaluate(grid: Grid): # based on empty cells and max tile. Also try score
     # return grid.score # can be countR1 * 4 + countR2 * 3 + countR3 * 2 + countR4 * 1 + the same thing for cols
     score = 0
     for i in range(4):
-        score += (grid.countRow(i) + grid.countCol(i))* (4 - i)
+        # score += (grid.countRow(i) + grid.countCol(i))* (4 - i)
+        score += (grid.countEmptyInRow(i) + grid.countEmptyInCol(i)) * i
+        score += ((grid.sumOfRow(i) + grid.sumOfCol(i)) * (4 - i)) * 2
 
     score += grid.score # cherry on top?
     score += len(grid.getEmptyCells())
