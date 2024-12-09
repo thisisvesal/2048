@@ -518,6 +518,20 @@ class Grid:
 
         return maximum
     
+    def getMaxInCol(self, col: int):
+        maximum = -1
+        head = self.getColHead(col)
+        if not head:
+            return 0
+        
+        current = head.node
+        while current:
+            if current.value > maximum:
+                maximum = current.value
+            current = current.down
+
+        return maximum
+    
     def getRowOrderGrade(self, row: int):
         """Grades tiles' arrangement in a row"""
         grade = 0
@@ -536,6 +550,30 @@ class Grid:
         """Returns the position of the upper left most empty cell"""
         for i in range(self.size):
             for j in range(self.size):
+                if self.getNode(i, j) == None:
+                    return (i, j)
+        return None
+    
+    def getUpperRightMostEmpty(self) -> tuple:
+        """Returns the position of the upper right most empty cell"""
+        for i in range(self.size):
+            for j in range(self.size - 1, -1, -1):
+                if self.getNode(i, j) == None:
+                    return (i, j)
+        return None
+
+    def getLowerLeftMostEmpty(self) -> tuple:
+        """Returns the position of the lower left most empty cell"""
+        for i in range(self.size - 1, -1, -1):
+            for j in range(self.size):
+                if self.getNode(i, j) == None:
+                    return (i, j)
+        return None
+
+    def getLowerRightMostEmpty(self) -> tuple:
+        """Returns the position of the lower right most empty cell"""
+        for i in range(self.size - 1, -1, -1):
+            for j in range(self.size - 1, -1, -1):
                 if self.getNode(i, j) == None:
                     return (i, j)
         return None

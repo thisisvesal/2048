@@ -6,8 +6,6 @@ from copy import deepcopy
 # Initialize Pygame
 pygame.init()
 
-AI_MODE = True
-
 # Constants
 GRID_SIZE = 4
 MAX_TILE = 2048
@@ -279,10 +277,6 @@ def get_onGameOverScreen():
 def get_onWinScreen():
     global onWinScreen
     return onWinScreen
-
-def is_AI_mode():
-    global AI_MODE
-    return AI_MODE
 
 def move(direction):
     """Moves the grid in the specified direction"""

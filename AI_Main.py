@@ -1,8 +1,13 @@
 import pygame
-import time
-import sys
-from pygame.locals import *
 from MiniMax import *
+
+'''
+
+This is an AI player for 2048.
+It is usually able to reach 1024 (~90% of the time in my tests),
+And it can sometimes reach 2048 (~40% to 50% of the time in the tests that I ran)
+
+'''
 
 def start():
     print("2048 by Vesal")
@@ -20,23 +25,15 @@ def update():
         # Draw everything:
         screen.fill(BACKGROUND_COLOR)
         draw_grid()
-        restart_button, undo_button, redo_button = draw_side_panel()
-
-        if get_status() == "win":
-            restart_button, continue_button = draw_win()
-        elif get_status() == "gameOver":
-            restart_button = draw_game_over()
-        elif get_status() == "addict":
-            quit_button = draw_custom_text("Ok you win, now get a life :)", "Get a life")
-
-        if not is_AI_mode():
-            print("Not AI, use the other Main.py to play yourself")
-            break
+        draw_side_panel()
 
         if get_status() == "play":
             best_move = find_best_move(get_current_grid())
-            print(f"Best move: {best_move}")
             move(best_move)
+        elif get_status() == "win":
+            draw_win()
+        elif get_status() == "gameOver":
+            draw_game_over()
 
         pygame.display.flip()
 

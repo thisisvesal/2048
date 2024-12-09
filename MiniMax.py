@@ -1,20 +1,21 @@
 from Game import *
-from Nodes.Node import Node  
+from Nodes.Node import Node
 
 def evaluate(grid: Grid): # Basically gives higher scores to grids with large tiles in the upper left,
                             # among other things
     if grid.hasWon():
         return float('inf')
     
+    size = grid.size
+    
     score = 0
-    for i in range(4):
-        # score += (grid.countRow(i) + grid.countCol(i))* (4 - i)
+    for i in range(size):
         score += grid.countEmptyInRow(i) * i * 2
         score += grid.countEmptyInCol(i) * i
-        score += grid.sumOfRow(i) * (4 - i) * 2
-        score += grid.sumOfCol(i) * (4 - i)
+        score += grid.sumOfRow(i) * (size - i) * 2
+        score += grid.sumOfCol(i) * (size - i)
 
-    score += grid.score # cherry on top
+    score += grid.score
     score += len(grid.getEmptyCells())
 
     return score
@@ -32,7 +33,7 @@ def minimax(grid: Grid, depth, maximizing):
                 if eval > max_eval:
                     max_eval = eval
         return max_eval
-    else:  # Random tile generation
+    else: # Tile spawn
         min_eval = float('inf')
 
         for tileValue in [2, 4]:
@@ -51,8 +52,6 @@ def find_best_move(grid: Grid):
     best_value = float('-inf')
     for move in ["up", "down", "left", "right"]:
         new_grid = simulate_move(grid, move)
-        print(f"Simulated move {move}")
-        print(new_grid)
         if new_grid:  # Valid move
             move_value = minimax(new_grid, depth=3, maximizing=False)
             if move_value > best_value:
