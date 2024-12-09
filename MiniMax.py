@@ -10,8 +10,8 @@ def evaluate(grid: Grid): # Basically gives higher scores to grids with large ti
     
     score = 0
     for i in range(size):
-        score += grid.countEmptyInRow(i) * i * 2
-        score += grid.countEmptyInCol(i) * i
+        score += grid.countEmptyInRow(i) * (i + 1) * 2
+        score += grid.countEmptyInCol(i) * (i + 1)
         score += grid.sumOfRow(i) * (size - i) * 2
         score += grid.sumOfCol(i) * (size - i)
 

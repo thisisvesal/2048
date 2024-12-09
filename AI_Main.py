@@ -1,5 +1,7 @@
 import pygame
+from pygame.locals import *
 from MiniMax import *
+import sys
 
 '''
 
@@ -21,19 +23,31 @@ def start():
     
 def update():
     while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == K_q):
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1: # Left click
+                    if get_status() != "addict" and restart_button.collidepoint(event.pos):
+                        reset_game()
+                    elif not get_onGameOverScreen() and not get_onWinScreen() and undo_button.collidepoint(event.pos):
+                        undo()
+                    elif not get_onGameOverScreen() and not get_onWinScreen() and redo_button.collidepoint(event.pos):
+                        redo()
 
         # Draw everything:
         screen.fill(BACKGROUND_COLOR)
         draw_grid()
-        draw_side_panel()
+        restart_button, undo_button, redo_button = draw_side_panel()
 
         if get_status() == "play":
             best_move = find_best_move(get_current_grid())
             move(best_move)
         elif get_status() == "win":
-            draw_win()
+            restart_button, continue_button = draw_win()
         elif get_status() == "gameOver":
-            draw_game_over()
+            restart_button = draw_game_over()
 
         pygame.display.flip()
 
