@@ -16,34 +16,34 @@ def start():
     
 def update():
     while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == K_q):
-                pygame.quit()
-                sys.exit()
+        # for event in pygame.event.get():
+        #     if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == K_q):
+        #         pygame.quit()
+        #         sys.exit()
 
 
-            # Draw everything:
-            screen.fill(BACKGROUND_COLOR)
-            draw_grid()
-            restart_button, undo_button, redo_button = draw_side_panel()
+        # Draw everything:
+        screen.fill(BACKGROUND_COLOR)
+        draw_grid()
+        restart_button, undo_button, redo_button = draw_side_panel()
 
-            if get_status() == "win":
-                restart_button, continue_button = draw_win()
-            elif get_status() == "gameOver":
-                restart_button = draw_game_over()
-            elif get_status() == "addict":
-                quit_button = draw_custom_text("Ok you win, now get a life :)", "Get a life")
+        if get_status() == "win":
+            restart_button, continue_button = draw_win()
+        elif get_status() == "gameOver":
+            restart_button = draw_game_over()
+        elif get_status() == "addict":
+            quit_button = draw_custom_text("Ok you win, now get a life :)", "Get a life")
 
-            if not is_AI_mode():
-                print("Not AI, use the other Main.py to play yourself")
-                break
+        if not is_AI_mode():
+            print("Not AI, use the other Main.py to play yourself")
+            break
 
-            if get_status() == "play":
-                best_move = find_best_move(get_current_grid())
-                print(f"Best move: {best_move}")
-                move(best_move)
+        if get_status() == "play":
+            best_move = find_best_move(get_current_grid())
+            print(f"Best move: {best_move}")
+            move(best_move)
 
-            pygame.display.flip()
+        pygame.display.flip()
 
 start()
 update()

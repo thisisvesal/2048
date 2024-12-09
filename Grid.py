@@ -452,6 +452,9 @@ class Grid:
 
     # Minimax utils:
 
+    def countEmptyInRow(self, row: int):
+        return self.size - self.countRow(row)
+
     def getPresentMaxValue(self):
         maximum = -1
 
