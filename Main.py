@@ -23,13 +23,16 @@ def update():
                 if event.button == 1: # Left click
                     if get_status() != "addict" and restart_button.collidepoint(event.pos):
                         reset_game()
+                    elif get_onGameOverScreen() and not get_onWinScreen() and undo_button.collidepoint(event.pos):
+                        undo()
+                        set_status("play")
                     elif not get_onGameOverScreen() and not get_onWinScreen() and undo_button.collidepoint(event.pos):
                         undo()
                     elif not get_onGameOverScreen() and not get_onWinScreen() and redo_button.collidepoint(event.pos):
                         redo()
                     elif get_onWinScreen() and continue_button.collidepoint(event.pos):
                         set_status("continue")
-                    elif get_onGameOverScreen() and quit_button.collidepoint(event.pos):
+                    elif get_status() == "addict" and get_onGameOverScreen() and quit_button.collidepoint(event.pos):
                         pygame.quit()
                         sys.exit()
             elif event.type == pygame.KEYDOWN and not get_onGameOverScreen() and not get_onWinScreen():
@@ -48,13 +51,17 @@ def update():
 
             # Draw everything:
             screen.fill(BACKGROUND_COLOR)
+
+            # Update the screen mode based on status. Necessary because an undo button was added to the game over page:
+            set_screen()
+
             draw_grid()
             restart_button, undo_button, redo_button = draw_side_panel()
 
             if get_status() == "win":
                 restart_button, continue_button = draw_win()
             elif get_status() == "gameOver":
-                restart_button = draw_game_over()
+                restart_button, undo_button = draw_game_over()
             elif get_status() == "addict":
                 quit_button = draw_custom_text("Ok you win, now get a life :)", "Get a life")
 

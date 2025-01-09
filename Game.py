@@ -128,9 +128,19 @@ def draw_game_over():
     button_text_rect = button_text.get_rect(center=button_rect.center)
     screen.blit(button_text, button_text_rect)
 
+    # Draw undo button
+    undo_button_rect = pygame.Rect(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 + 60, 200, 50)
+    undo_button_color = BUTTON_HOVER_COLOR if undo_button_rect.collidepoint(mouse_pos) else BUTTON_COLOR
+    pygame.draw.rect(screen, undo_button_color, undo_button_rect)
+
+    # Undo button text
+    undo_button_text = BUTTON_FONT.render("Undo", True, (237, 224, 200))
+    undo_button_text_rect = undo_button_text.get_rect(center=undo_button_rect.center)
+    screen.blit(undo_button_text, undo_button_text_rect)
+
     onGameOverScreen = True
 
-    return button_rect
+    return button_rect, undo_button_rect
 
 def draw_win():
     """Displays the game over screen"""
@@ -277,6 +287,18 @@ def get_onGameOverScreen():
 def get_onWinScreen():
     global onWinScreen
     return onWinScreen
+
+def set_screen():
+    global onGameOverScreen, onWinScreen
+    if status == "play" or status == "continue":
+        onGameOverScreen = False
+        onWinScreen = False
+    elif status == "addict" or status == "gameOver":
+        onGameOverScreen = True
+        onWinScreen = False
+    elif status == "win":
+        onGameOverScreen = False
+        onWinScreen = True
 
 def move(direction):
     """Moves the grid in the specified direction"""
