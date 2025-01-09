@@ -103,7 +103,7 @@ def draw_custom_text(customText: str, buttonText: str):
 
     return button_rect
 
-def draw_game_over():
+def draw_game_over_with_undo():
     """Displays the game over screen"""
     global onGameOverScreen
 
@@ -141,6 +141,35 @@ def draw_game_over():
     onGameOverScreen = True
 
     return button_rect, undo_button_rect
+
+def draw_game_over_no_undo():
+    """Displays the game over screen"""
+    global onGameOverScreen
+
+    overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+    overlay.set_alpha(128)  # transparency level
+    overlay.fill((238, 228, 218, 200)) 
+    screen.blit(overlay, (0, 0))
+
+    # Draw Game Over text
+    game_over_text = FONT.render("Game Over", True, BUTTON_COLOR)
+    game_over_rect = game_over_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 50))
+    screen.blit(game_over_text, game_over_rect)
+
+    # Draw restart button
+    button_rect = pygame.Rect(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2, 200, 50)
+    mouse_pos = pygame.mouse.get_pos()
+    button_color = BUTTON_HOVER_COLOR if button_rect.collidepoint(mouse_pos) else BUTTON_COLOR
+    pygame.draw.rect(screen, button_color, button_rect)
+
+    # Button text
+    button_text = BUTTON_FONT.render("Restart", True, (237, 224, 200))
+    button_text_rect = button_text.get_rect(center=button_rect.center)
+    screen.blit(button_text, button_text_rect)
+
+    onGameOverScreen = True
+
+    return button_rect
 
 def draw_win():
     """Displays the game over screen"""

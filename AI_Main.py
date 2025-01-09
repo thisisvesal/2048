@@ -35,19 +35,21 @@ def update():
                         undo()
                     elif not get_onGameOverScreen() and not get_onWinScreen() and redo_button.collidepoint(event.pos):
                         redo()
+                    elif get_onWinScreen() and continue_button.collidepoint(event.pos):
+                        set_status("continue")
 
         # Draw everything:
         screen.fill(BACKGROUND_COLOR)
         draw_grid()
         restart_button, undo_button, redo_button = draw_side_panel()
 
-        if get_status() == "play":
+        if get_status() == "play" or get_status() == "continue":
             best_move = find_best_move(get_current_grid())
             move(best_move)
         elif get_status() == "win":
             restart_button, continue_button = draw_win()
         elif get_status() == "gameOver":
-            restart_button = draw_game_over()
+            restart_button = draw_game_over_no_undo()
 
         pygame.display.flip()
 

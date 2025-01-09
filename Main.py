@@ -61,7 +61,7 @@ def update():
             if get_status() == "win":
                 restart_button, continue_button = draw_win()
             elif get_status() == "gameOver":
-                restart_button, undo_button = draw_game_over()
+                restart_button, undo_button = draw_game_over_with_undo()
             elif get_status() == "addict":
                 quit_button = draw_custom_text("Ok you win, now get a life :)", "Get a life")
 
